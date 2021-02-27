@@ -3,7 +3,7 @@ from typing import Text, Optional, Union, Sequence, Dict
 from lib.dataclasses import serializable_dataclass
 
 
-def test_should_serialize_works_when_class_is_simple():
+def test_json_serializer_should_works_when_class_is_simple():
     @serializable_dataclass
     class AnyData:
         field1: int
@@ -18,7 +18,7 @@ def test_should_serialize_works_when_class_is_simple():
     }
 
 
-def test_should_serialize_works_when_class_have_optional_field():
+def test_json_serializer_should_works_when_class_have_optional_field():
     @serializable_dataclass
     class AnyData:
         field1: int
@@ -40,7 +40,7 @@ def test_should_serialize_works_when_class_have_optional_field():
     }
 
 
-def test_should_serialize_works_when_class_have_union_field():
+def test_json_serializer_should_works_when_class_have_union_field():
     @serializable_dataclass
     class AnyData:
         field1: int
@@ -62,7 +62,7 @@ def test_should_serialize_works_when_class_have_union_field():
     }
 
 
-def test_should_serialize_works_when_field_is_list():
+def test_json_serializer_should_works_when_field_is_list():
     @serializable_dataclass
     class AnyDataInner:
         field_inner1_1: Text
@@ -79,7 +79,7 @@ def test_should_serialize_works_when_field_is_list():
     }
 
 
-def test_should_serialize_works_when_field_is_dict():
+def test_json_serializer_should_works_when_field_is_dict():
     @serializable_dataclass
     class AnyDataInner:
         field_inner1_1: Text
@@ -109,7 +109,7 @@ def test_should_serialize_works_when_field_is_dict():
     }
 
 
-def test_should_serialize_works_when_class_is_hierarchy():
+def test_json_serializer_should_works_when_class_is_hierarchy():
     @serializable_dataclass
     class AnyDataInner2:
         field_inner2_1: Text
