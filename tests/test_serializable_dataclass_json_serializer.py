@@ -79,6 +79,44 @@ def test_json_serializer_should_works_when_field_is_list():
     }
 
 
+def test_json_serializer_should_works_when_field_is_tuple():
+    @serializable_dataclass
+    class AnyDataInner:
+        field_inner1_1: Text
+
+    @serializable_dataclass
+    class AnyData:
+        field1: int
+        field2: Sequence[AnyDataInner]
+
+    data = AnyData(field1=1, field2=(AnyDataInner("a"), AnyDataInner("b")))
+    assert data.serialize() == {
+        "field1": 1,
+        "field2": [{"field_inner1_1": "a"}, {"field_inner1_1": "b"}],
+    }
+
+
+def test_json_serializer_should_works_when_field_is_iterator():
+    @serializable_dataclass
+    class AnyDataInner:
+        field_inner1_1: Text
+
+    @serializable_dataclass
+    class AnyData:
+        field1: int
+        field2: Sequence[AnyDataInner]
+
+    def iterator():
+        for v in [AnyDataInner("a"), AnyDataInner("b")]:
+            yield v
+
+    data = AnyData(field1=1, field2=iterator())
+    assert data.serialize() == {
+        "field1": 1,
+        "field2": [{"field_inner1_1": "a"}, {"field_inner1_1": "b"}],
+    }
+
+
 def test_json_serializer_should_works_when_field_is_dict():
     @serializable_dataclass
     class AnyDataInner:
