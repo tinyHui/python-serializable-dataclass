@@ -1,4 +1,4 @@
-from typing import Text, Optional, Union
+from typing import Text, Optional, Union, Sequence, Dict
 
 from lib.dataclasses import serializable_dataclass
 
@@ -59,6 +59,53 @@ def test_should_serialize_works_when_class_have_union_field():
         "field1": 1,
         "field2": None,
         "field3": "another string",
+    }
+
+
+def test_should_serialize_works_when_field_is_list():
+    @serializable_dataclass
+    class AnyDataInner:
+        field_inner1_1: Text
+
+    @serializable_dataclass
+    class AnyData:
+        field1: int
+        field2: Sequence[AnyDataInner]
+
+    data = AnyData(field1=1, field2=[AnyDataInner("a"), AnyDataInner("b")])
+    assert data.serialize() == {
+        "field1": 1,
+        "field2": [{"field_inner1_1": "a"}, {"field_inner1_1": "b"}],
+    }
+
+
+def test_should_serialize_works_when_field_is_dict():
+    @serializable_dataclass
+    class AnyDataInner:
+        field_inner1_1: Text
+
+    @serializable_dataclass
+    class AnyData:
+        field1: int
+        field2: Dict[str, AnyDataInner]
+
+    class SomeKey:
+        def __init__(self, k):
+            self.k = k
+
+        def __repr__(self):
+            return str(self.k)
+
+        def __str__(self):
+            return self.__repr__()
+
+    data = AnyData(
+        field1=1,
+        field2={SomeKey("v1"): AnyDataInner("a"), SomeKey("v2"): AnyDataInner("b")},
+    )
+    assert data.serialize() == {
+        "field1": 1,
+        "field2": {"v1": {"field_inner1_1": "a"}, "v2": {"field_inner1_1": "b"}},
     }
 
 
