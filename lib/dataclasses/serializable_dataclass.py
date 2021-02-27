@@ -1,8 +1,8 @@
 from dataclasses import _process_class
-from .consts import Lang
-from .json_serializer import json_serialize
 
-__SERIALIZABLE_SIGN = "__is_serializable__"
+from .consts import Lang, _SERIALIZABLE_SIGN
+from .json import json_serializer, json_deserializer
+from .registry import SerializableDataclassRegistry
 
 
 def serializable_dataclass(
@@ -22,16 +22,20 @@ def serializable_dataclass(
             cls, init, repr, eq, order, unsafe_hash, frozen
         )
         if language == Lang.JSON:
-            serialize_fn = json_serialize
+            serialize_fn = json_serializer
+            deserialize_fn = json_deserializer
         else:
             raise NotImplemented(f"language {language} does not supported")
-        setattr(processed_class, __SERIALIZABLE_SIGN, True)
+        setattr(processed_class, _SERIALIZABLE_SIGN, True)
         setattr(processed_class, "serialize", serialize_fn)
+        setattr(processed_class, "deserialize", deserialize_fn)
         return processed_class
 
     # call with no parameters
     if cls is None:
         return wrapper
+
+    SerializableDataclassRegistry().register(cls)
 
     # class with parameters
     return wrapper(cls)
