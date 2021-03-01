@@ -6,7 +6,7 @@ from .registry import SerializableDataclassRegistry
 
 
 def serializable_dataclass(
-    cls,
+    cls=None,
     /,
     *,
     language=Lang.JSON,

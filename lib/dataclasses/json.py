@@ -3,7 +3,14 @@ from typing import Text, Dict, Union, Sequence, List, Any
 
 from .consts import _SERIALIZABLE_SIGN
 from .errors import DeserializeConfusedError, DeserializeFailedError
-from .type_system import BASIC_TYPES
+from .type_system import (
+    BASIC_TYPES,
+    _is_union_type,
+    _is_sequence_type,
+    _is_list_type,
+    _is_tuple_type,
+    _is_set_type,
+)
 
 
 def __serialize_value(value: Any):
@@ -36,22 +43,32 @@ def json_serializer(self):
 def __deserialize_value_for_all_assumed_types(
     value: Any, desired_types: Sequence[type]
 ):
-    possible_values = set()
+    hashable_possible_values = set()
+    unhashable_possible_values = []
+    possible_values_len = lambda: len(hashable_possible_values) + len(
+        unhashable_possible_values
+    )
 
     for desired_type in desired_types:
         possible_value = __deserialize_value(value, desired_type)
-        possible_values.add(possible_value)
+        try:
+            hashable_possible_values.add(possible_value)
+        except TypeError:
+            unhashable_possible_values.append(possible_value)
 
-    if len(possible_values) > 1:
+    if possible_values_len() > 1:
         raise DeserializeConfusedError(
-            f"more than 1 possible deserialized value for {value}: {possible_values}"
+            f"more than 1 possible deserialized value for {value}: {hashable_possible_values}"
         )
-    if len(possible_values) == 0:
+    if possible_values_len() == 0:
         raise DeserializeFailedError(
             f"could not deserialize value {value} under types {desired_types}"
         )
 
-    return possible_values.pop()
+    if len(hashable_possible_values) > 0:
+        return hashable_possible_values.pop()
+    else:
+        return unhashable_possible_values[0]
 
 
 def __deserialize_value(value: Any, desired_type: type):
@@ -62,14 +79,30 @@ def __deserialize_value(value: Any, desired_type: type):
     if getattr(desired_type, _SERIALIZABLE_SIGN, False):
         return desired_type.deserialize(value)
 
-    # for Generic types
-    # Python3.8 does not support GenericAlias yet
-    if getattr(desired_type, "__origin__", False):
-        type_name = desired_type.__origin__._name
+    # for sequence type
+    if _is_sequence_type(desired_type) or _is_list_type(desired_type):
 
-        if type_name == "Union":
-            type_args = desired_type.__args__
-            return __deserialize_value_for_all_assumed_types(value, type_args)
+        return [
+            __deserialize_value_for_all_assumed_types(v, desired_type.__args__)
+            for v in value
+        ]
+
+    if _is_tuple_type(desired_type):
+        return tuple(
+            __deserialize_value_for_all_assumed_types(v, desired_type.__args__)
+            for v in value
+        )
+
+    if _is_set_type(desired_type):
+        return {
+            __deserialize_value_for_all_assumed_types(v, desired_type.__args__)
+            for v in value
+        }
+
+    # for Generic types (Union, Option)
+    if _is_union_type(desired_type):
+        type_args = desired_type.__args__
+        return __deserialize_value_for_all_assumed_types(value, type_args)
 
     raise NotImplementedError(
         f"deserialize {value} for type {desired_type} is not supported yet"
