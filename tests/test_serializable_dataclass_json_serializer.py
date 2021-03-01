@@ -1,4 +1,4 @@
-from typing import Text, Optional, Union, Sequence, Dict
+from typing import Text, Optional, Union, Sequence, Dict, Set
 
 from lib.dataclasses import serializable_dataclass
 
@@ -73,6 +73,26 @@ def test_json_serializer_should_works_when_field_is_list():
         field2: Sequence[AnyDataInner]
 
     data = AnyData(field1=1, field2=[AnyDataInner("a"), AnyDataInner("b")])
+    assert data.serialize() == {
+        "field1": 1,
+        "field2": [{"field_inner1_1": "a"}, {"field_inner1_1": "b"}],
+    }
+
+
+def test_json_serializer_should_works_when_field_is_set():
+    @serializable_dataclass
+    class AnyDataInner:
+        field_inner1_1: Text
+
+        def __hash__(self):
+            return id(self.field_inner1_1)
+
+    @serializable_dataclass
+    class AnyData:
+        field1: int
+        field2: Set[AnyDataInner]
+
+    data = AnyData(field1=1, field2={AnyDataInner("a"), AnyDataInner("b")})
     assert data.serialize() == {
         "field1": 1,
         "field2": [{"field_inner1_1": "a"}, {"field_inner1_1": "b"}],

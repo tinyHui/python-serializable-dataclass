@@ -11,6 +11,7 @@ def __serialize_value(value: Any):
         return value.serialize()
     elif (
         isinstance(value, list)
+        or isinstance(value, set)
         or isinstance(value, tuple)
         or isinstance(value, GeneratorType)
     ):
