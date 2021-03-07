@@ -1,0 +1,4 @@
+[flake8]
+use_class_attributes_order_strict_mode = True
+ignore=W503, E731
+max-line-length=100

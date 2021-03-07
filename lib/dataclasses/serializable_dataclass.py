@@ -18,14 +18,12 @@ def serializable_dataclass(
     frozen=False,
 ):
     def wrapper(cls):
-        processed_class = _process_class(
-            cls, init, repr, eq, order, unsafe_hash, frozen
-        )
+        processed_class = _process_class(cls, init, repr, eq, order, unsafe_hash, frozen)
         if language == Lang.JSON:
             serialize_fn = json_serializer
             deserialize_fn = json_deserializer
         else:
-            raise NotImplemented(f"language {language} does not supported")
+            raise NotImplementedError(f"language {language} does not supported")
         setattr(processed_class, _SERIALIZABLE_SIGN, True)
         setattr(processed_class, "serialize", serialize_fn)
         setattr(processed_class, "deserialize", deserialize_fn)
