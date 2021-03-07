@@ -1,1 +1,1 @@
-[![codecov](https://codecov.io/gh/tinyHui/python-serializable-dataclass/branch/main/graph/badge.svg?token=OXR3RZB0KN)](https://codecov.io/gh/tinyHui/python-serializable-dataclass)
+![workflow](https://github.com/tinyHui/python-serializable-dataclass/actions/workflows/pythonpackage.yaml/badge.svg) [![codecov](https://codecov.io/gh/tinyHui/python-serializable-dataclass/branch/main/graph/badge.svg?token=OXR3RZB0KN)](https://codecov.io/gh/tinyHui/python-serializable-dataclass)
