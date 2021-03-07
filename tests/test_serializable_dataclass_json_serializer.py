@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Text, Optional, Union, Sequence, Dict, Set
 
 from lib.dataclasses import serializable_dataclass
@@ -16,6 +17,15 @@ def test_json_serializer_should_works_when_class_is_simple():
         "field2": "string",
         "field3": "another string",
     }
+
+
+def test_json_serializer_should_works_when_class_have_decimal_field():
+    @serializable_dataclass
+    class AnyData:
+        field1: Decimal
+
+    data = AnyData(field1=Decimal("1.11101"))
+    assert data.serialize() == {"field1": "1.11101"}
 
 
 def test_json_serializer_should_works_when_class_have_optional_field():

@@ -1,3 +1,4 @@
+from decimal import Decimal
 from types import GeneratorType
 from typing import Text, Dict, Union, Sequence, List, Any
 
@@ -16,6 +17,8 @@ from .type_system import (
 def __serialize_value(value: Any):
     if getattr(value, _SERIALIZABLE_SIGN, False):
         return value.serialize()
+    elif isinstance(value, Decimal):
+        return str(value)
     elif (
         isinstance(value, list)
         or isinstance(value, set)
@@ -40,14 +43,10 @@ def json_serializer(self):
     return result
 
 
-def __deserialize_value_for_all_assumed_types(
-    value: Any, desired_types: Sequence[type]
-):
+def __deserialize_value_for_all_assumed_types(value: Any, desired_types: Sequence[type]):
     hashable_possible_values = set()
     unhashable_possible_values = []
-    possible_values_len = lambda: len(hashable_possible_values) + len(
-        unhashable_possible_values
-    )
+    possible_values_len = lambda: len(hashable_possible_values) + len(unhashable_possible_values)
 
     for desired_type in desired_types:
         possible_value = __deserialize_value(value, desired_type)
@@ -79,40 +78,31 @@ def __deserialize_value(value: Any, desired_type: type):
     if getattr(desired_type, _SERIALIZABLE_SIGN, False):
         return desired_type.deserialize(value)
 
+    if desired_type is Decimal:
+        return Decimal(value)
+
     # for sequence type
     if _is_sequence_type(desired_type) or _is_list_type(desired_type):
-
-        return [
-            __deserialize_value_for_all_assumed_types(v, desired_type.__args__)
-            for v in value
-        ]
+        return [__deserialize_value_for_all_assumed_types(v, desired_type.__args__) for v in value]
 
     if _is_tuple_type(desired_type):
         return tuple(
-            __deserialize_value_for_all_assumed_types(v, desired_type.__args__)
-            for v in value
+            __deserialize_value_for_all_assumed_types(v, desired_type.__args__) for v in value
         )
 
     if _is_set_type(desired_type):
-        return {
-            __deserialize_value_for_all_assumed_types(v, desired_type.__args__)
-            for v in value
-        }
+        return {__deserialize_value_for_all_assumed_types(v, desired_type.__args__) for v in value}
 
     # for Generic types (Union, Option)
     if _is_union_type(desired_type):
         type_args = desired_type.__args__
         return __deserialize_value_for_all_assumed_types(value, type_args)
 
-    raise NotImplementedError(
-        f"deserialize {value} for type {desired_type} is not supported yet"
-    )
+    raise NotImplementedError(f"deserialize {value} for type {desired_type} is not supported yet")
 
 
 @classmethod
-def json_deserializer(
-    cls, json: Dict[Text, Union[int, complex, bool, List, Sequence, Dict]]
-):
+def json_deserializer(cls, json: Dict[Text, Union[int, complex, bool, List, Sequence, Dict]]):
     cls_annotations = cls.__annotations__
     obj_values = {}
 

@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Text, Optional, Union, Sequence, List, Set, Tuple
 
 from lib.dataclasses import serializable_dataclass
@@ -15,6 +16,14 @@ def test_json_deserializer_should_works_when_class_is_simple():
     ) == AnyData(field1=1, field2="string", field3="another string")
 
 
+def test_json_serializer_should_works_when_class_have_decimal_field():
+    @serializable_dataclass
+    class AnyData:
+        field1: Decimal
+
+    assert AnyData.deserialize({"field1": "1.00011201"}) == AnyData(field1=Decimal("1.00011201"))
+
+
 def test_json_deserializer_should_works_when_class_have_optional_field():
     @serializable_dataclass
     class AnyData:
@@ -22,13 +31,27 @@ def test_json_deserializer_should_works_when_class_have_optional_field():
         field2: Optional[str]
         field3: Text
 
-    assert AnyData.deserialize(
-        {"field1": 1, "field2": "string", "field3": "another string",}
-    ) == AnyData(field1=1, field2="string", field3="another string")
+    assert (
+        AnyData.deserialize(
+            {
+                "field1": 1,
+                "field2": "string",
+                "field3": "another string",
+            }
+        )
+        == AnyData(field1=1, field2="string", field3="another string")
+    )
 
-    assert AnyData.deserialize(
-        {"field1": 1, "field2": None, "field3": "another string",}
-    ) == AnyData(field1=1, field2=None, field3="another string")
+    assert (
+        AnyData.deserialize(
+            {
+                "field1": 1,
+                "field2": None,
+                "field3": "another string",
+            }
+        )
+        == AnyData(field1=1, field2=None, field3="another string")
+    )
 
 
 def test_json_deserializer_should_works_when_class_have_union_field():
@@ -38,13 +61,27 @@ def test_json_deserializer_should_works_when_class_have_union_field():
         field2: Union[str, int, bool]
         field3: Text
 
-    assert AnyData.deserialize(
-        {"field1": 1, "field2": 2, "field3": "another string",}
-    ) == AnyData(field1=1, field2=2, field3="another string")
+    assert (
+        AnyData.deserialize(
+            {
+                "field1": 1,
+                "field2": 2,
+                "field3": "another string",
+            }
+        )
+        == AnyData(field1=1, field2=2, field3="another string")
+    )
 
-    assert AnyData.deserialize(
-        {"field1": 1, "field2": None, "field3": "another string",}
-    ) == AnyData(field1=1, field2=None, field3="another string")
+    assert (
+        AnyData.deserialize(
+            {
+                "field1": 1,
+                "field2": None,
+                "field3": "another string",
+            }
+        )
+        == AnyData(field1=1, field2=None, field3="another string")
+    )
 
 
 def test_json_deserializer_should_works_when_field_is_sequence():
@@ -57,9 +94,15 @@ def test_json_deserializer_should_works_when_field_is_sequence():
         field1: int
         field2: Sequence[AnyDataInner]
 
-    assert AnyData.deserialize(
-        {"field1": 1, "field2": [{"field_inner1_1": "a"}, {"field_inner1_1": "b"}],}
-    ) == AnyData(field1=1, field2=[AnyDataInner("a"), AnyDataInner("b")])
+    assert (
+        AnyData.deserialize(
+            {
+                "field1": 1,
+                "field2": [{"field_inner1_1": "a"}, {"field_inner1_1": "b"}],
+            }
+        )
+        == AnyData(field1=1, field2=[AnyDataInner("a"), AnyDataInner("b")])
+    )
 
 
 def test_json_deserializer_should_works_when_field_is_list():
@@ -72,9 +115,15 @@ def test_json_deserializer_should_works_when_field_is_list():
         field1: int
         field2: List[AnyDataInner]
 
-    assert AnyData.deserialize(
-        {"field1": 1, "field2": [{"field_inner1_1": "a"}, {"field_inner1_1": "b"}],}
-    ) == AnyData(field1=1, field2=[AnyDataInner("a"), AnyDataInner("b")])
+    assert (
+        AnyData.deserialize(
+            {
+                "field1": 1,
+                "field2": [{"field_inner1_1": "a"}, {"field_inner1_1": "b"}],
+            }
+        )
+        == AnyData(field1=1, field2=[AnyDataInner("a"), AnyDataInner("b")])
+    )
 
 
 def test_json_deserializer_should_works_when_field_is_set():
@@ -87,9 +136,15 @@ def test_json_deserializer_should_works_when_field_is_set():
         field1: int
         field2: Set[AnyDataInner]
 
-    assert AnyData.deserialize(
-        {"field1": 1, "field2": [{"field_inner1_1": "a"}, {"field_inner1_1": "b"}],}
-    ) == AnyData(field1=1, field2={AnyDataInner("a"), AnyDataInner("b")})
+    assert (
+        AnyData.deserialize(
+            {
+                "field1": 1,
+                "field2": [{"field_inner1_1": "a"}, {"field_inner1_1": "b"}],
+            }
+        )
+        == AnyData(field1=1, field2={AnyDataInner("a"), AnyDataInner("b")})
+    )
 
 
 def test_json_deserializer_should_works_when_field_is_tuple():
@@ -102,9 +157,15 @@ def test_json_deserializer_should_works_when_field_is_tuple():
         field1: int
         field2: Tuple[AnyDataInner]
 
-    assert AnyData.deserialize(
-        {"field1": 1, "field2": [{"field_inner1_1": "a"}, {"field_inner1_1": "b"}],}
-    ) == AnyData(field1=1, field2=(AnyDataInner("a"), AnyDataInner("b")))
+    assert (
+        AnyData.deserialize(
+            {
+                "field1": 1,
+                "field2": [{"field_inner1_1": "a"}, {"field_inner1_1": "b"}],
+            }
+        )
+        == AnyData(field1=1, field2=(AnyDataInner("a"), AnyDataInner("b")))
+    )
 
 
 def test_json_deserializer_should_works_when_class_is_hierarchy():
