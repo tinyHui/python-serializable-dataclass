@@ -31,12 +31,12 @@ jobs:
         flake8 lib --show-source --statistics --count
     - name: Test with pytest
       run: |
-        pytest --cov=./ --cov-report=xml
+        pytest --cov=./ --cov-report=xml:cov.xml
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        files: ./coverage1.xml,./coverage2.xml
+        files: ./cov.xml
         directory: ./coverage/reports/
         flags: unittests
         env_vars: OS,PYTHON
