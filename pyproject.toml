@@ -1,0 +1,5 @@
+[tool.portray]
+modules = ["python-serializable-dataclass"]
+[build-system]
+requires = []
+build-backend = "setuptools.build_meta"
