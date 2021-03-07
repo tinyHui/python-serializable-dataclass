@@ -31,4 +31,4 @@ jobs:
         flake8 dataclasses_json --show-source --statistics --count
     - name: Test with pytest
       run: |
-        pytest
+        pytest tests --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
