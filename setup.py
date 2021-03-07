@@ -4,7 +4,7 @@ setup(
     name="python-serializable-dataclass",
     version="0.1.0",
     packages=find_packages(exclude=("tests*",)),
-    package_data={"dataclasses_json": ["py.typed"]},
+    package_data={"lib": ["py.typed"]},
     author="jason",
     author_email="jiahuic@twitter.com",
     description="Easily makes python object as a serializable dataclass",
