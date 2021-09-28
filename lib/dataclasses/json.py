@@ -1,4 +1,5 @@
 from decimal import Decimal
+from enum import Enum
 from types import GeneratorType
 from typing import Text, Dict, Union, Sequence, List, Any
 
@@ -19,6 +20,8 @@ def __serialize_value(value: Any):
         return value.serialize()
     elif isinstance(value, Decimal):
         return str(value)
+    elif isinstance(value, Enum):
+        return value.value
     elif (
         isinstance(value, list)
         or isinstance(value, set)
@@ -80,6 +83,9 @@ def __deserialize_value(value: Any, desired_type: type):
 
     if desired_type is Decimal:
         return Decimal(value)
+
+    if hasattr(desired_type, "mro") and Enum in desired_type.mro():
+        return desired_type(value)
 
     # for sequence type
     if _is_sequence_type(desired_type) or _is_list_type(desired_type):

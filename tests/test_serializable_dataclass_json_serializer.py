@@ -1,4 +1,5 @@
 from decimal import Decimal
+from enum import Enum
 from typing import Text, Optional, Union, Sequence, Dict, Set
 
 from lib.dataclasses import serializable_dataclass
@@ -26,6 +27,18 @@ def test_json_serializer_should_works_when_class_have_decimal_field():
 
     data = AnyData(field1=Decimal("1.11101"))
     assert data.serialize() == {"field1": "1.11101"}
+
+
+def test_json_serializer_should_works_when_class_have_enum_field():
+    class E(Enum):
+        value = "value"
+
+    @serializable_dataclass
+    class AnyData:
+        field1: E
+
+    data = AnyData(field1=E.value)
+    assert data.serialize() == {"field1": "value"}
 
 
 def test_json_serializer_should_works_when_class_have_optional_field():
