@@ -7,7 +7,6 @@ from .registry import SerializableDataclassRegistry
 
 def serializable_dataclass(
     cls=None,
-    /,
     *,
     language=Lang.JSON,
     init=True,
@@ -18,7 +17,9 @@ def serializable_dataclass(
     frozen=False,
 ):
     def wrapper(cls):
-        processed_class = _process_class(cls, init, repr, eq, order, unsafe_hash, frozen)
+        processed_class = _process_class(
+            cls, init=init, repr=repr, eq=eq, order=order, unsafe_hash=unsafe_hash, frozen=frozen
+        )
         if language == Lang.JSON:
             serialize_fn = json_serializer
             deserialize_fn = json_deserializer
