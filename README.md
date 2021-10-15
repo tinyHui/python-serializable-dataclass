@@ -5,13 +5,13 @@ This library provides a very simple API for encoding and decoding Python class t
 
 ## Quickstart
 
-`pip install python=serializable-dataclass`
+`pip install py-serializable-dataclass`
 
 First, you need to define the data object, e.g.
 ```python
-from serializable_dataclass import serializable_dataclass, Lang
+from serializable_dataclass import serializable_dataclass
 
-@serializable_dataclass(language=Lang)
+@serializable_dataclass
 class AnyData:
     field1: int
     field2: Optional[str]
