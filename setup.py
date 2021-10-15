@@ -16,7 +16,7 @@ setup(
     keywords="dataclasses json",
     install_requires=[],
     python_requires=">=3.7",
-    extras_require={"dev": ["pytest", "pytest-cov", "mypy", "flake8"]},
+    extras_require={"dev": ["pytest", "pytest-cov", "mypy", "flake8", "black"]},
     include_package_data=True,
     scripts=["publish.py"],
 )
