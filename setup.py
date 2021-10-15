@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="python-serializable-dataclass",
-    version="0.1.1",
+    name="py-serializable-dataclass",
+    version="0.1.0",
     packages=find_packages(exclude=("tests*",)),
     package_data={"lib": ["py.typed"]},
     author="jason",
