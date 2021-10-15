@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="python-serializable-dataclass",
-    version="0.1.0",
+    version="0.1.1",
     packages=find_packages(exclude=("tests*",)),
     package_data={"lib": ["py.typed"]},
     author="jason",
