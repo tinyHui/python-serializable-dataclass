@@ -15,7 +15,7 @@ setup(
     license="GNU General Public License v3.0",
     keywords="dataclasses json",
     install_requires=[],
-    python_requires=">=3.8",
+    python_requires=">=3.7",
     extras_require={"dev": ["pytest", "pytest-cov", "mypy", "flake8"]},
     include_package_data=True,
     scripts=["publish.py"],
